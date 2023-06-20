@@ -1,0 +1,26 @@
+// Code your testbench here
+// or browse Examples
+class eth_pkt;
+  bit[7:0] sof;
+  bit[15:0] len;
+  int count;
+  function print(bit[7:0] sof,bit[15:0] len,int count);
+    $display("sof= %0h,len= %0h, count=%0d",sof,len,count);
+  endfunction
+endclass
+class eth_good_pkt extends eth_pkt;
+  int count_good;
+  function print1(int count_good);
+    super.print(14,12,65);
+    $display("count_good=%0d",count_good);
+  endfunction
+endclass
+
+
+module tb;
+  initial begin
+    eth_good_pkt e1;
+    e1=new();
+    e1.print1(5);
+  end
+endmodule

@@ -1,0 +1,20 @@
+// Code your testbench here
+// or browse Examples
+// Code your testbench here
+// or browse Examples
+class addition;
+  int x,y;
+  function int summation(int x,int y);
+    return x+y;
+  endfunction
+endclass
+module sv_class;
+  int sum;
+  initial begin
+  addition a1;
+  a1=new();
+  sum=a1.summation(2,3);
+    $display("sum is =%0d",sum);
+           end
+           endmodule
+    

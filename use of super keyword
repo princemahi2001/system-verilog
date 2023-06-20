@@ -1,0 +1,37 @@
+class rect;
+  int length,width;
+  function new(int x,y);
+    this.length=x;
+    this.width=y;
+  endfunction
+  function int area();
+    return length*width;
+  endfunction
+  function int perimeter();
+    return 2*(length+width);
+  endfunction
+endclass 
+class square extends rect;
+  int size;
+  function new(int size);
+     super.new(size,size);
+    this.size=size;
+   
+  endfunction
+endclass
+module tb;
+  int area1,perimeter1,size1;
+  rect r1;
+  square s1;
+  initial begin
+    //r1=new();
+    s1=new(5);
+    area1=s1.area();
+    //area1=r1.area(2,3);
+    perimeter1=s1.perimeter();
+    $display("area=%0d",area1);
+    $display("perimeter =%0d",perimeter1);
+    
+  end
+endmodule
+    

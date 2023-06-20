@@ -1,0 +1,9 @@
+class p;
+  static int a;
+endclass 
+module tb;
+  initial begin
+    p::a=10;
+    $display("value of a =%0d",p::a);
+  end
+endmodule

@@ -1,0 +1,27 @@
+// Code your testbench here
+// or browse Examples
+class parent;
+  int a=50;
+  virtual task display();
+    $display("inside parent class::value ofa=%d",a);
+  endtask
+endclass
+class child extends parent;
+  task display();
+    a=100;
+    $display("inside the child class::value ofa=%d",a);
+             endtask
+             function new();
+               super.new();
+             endfunction
+             endclass
+module tb;
+  child c;
+  parent p;
+  initial begin
+    c=new();
+    p=c;
+    c.display();
+    p.display();
+  end
+endmodule

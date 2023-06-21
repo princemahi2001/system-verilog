@@ -1,0 +1,23 @@
+// Code your testbench here
+// or browse Examples
+module queue;
+int q1[$];
+    initial begin
+    q1={1,2,3,4,5,6};
+    //q1.pushback(7);
+    q1[q1.size()]=7;
+    q1[q1.size()]=8;
+      $display("element at 0th index is=%0d",q1[0]);
+      //insert element at any index
+      for (int i = q1.size() - 1; i >= 2; i--) begin
+        q1[i+1] = q1[i];
+    end
+      q1[2]=9;
+      forever  begin q1[q1.size()]=q1[0]; end #2 $stop;
+      foreach (q1[i]) begin
+      $display("queue[%0d] = %0d", i, q1[i]);
+    end
+      
+  end
+  
+endmodule

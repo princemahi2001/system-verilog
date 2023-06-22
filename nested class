@@ -1,0 +1,20 @@
+typedef class bc;
+class ab;
+  int a;
+  bc B;
+  function new();
+    B=new();
+  endfunction
+endclass
+class bc;
+  
+  int b;
+endclass 
+module tb;
+  ab A;
+  initial begin
+  A=new();
+  A.a=10;
+  $display(A.a);
+  end
+endmodule

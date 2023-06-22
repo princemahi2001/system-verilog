@@ -1,0 +1,19 @@
+// Code your testbench here
+// or browse Examples
+module sem1;
+  semaphore sem;
+  initial begin
+    sem=new(4);
+    fork 
+      display();
+      display();
+      display();
+      display();
+    join
+  end
+  task automatic display();
+    sem.get(2);
+    $display("the current simulation time is %t",$time);
+    #10 sem.put();
+  endtask
+endmodule

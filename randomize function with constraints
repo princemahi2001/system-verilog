@@ -37,3 +37,132 @@ module test;
       #2; end
   end
 endmodule
+
+
+//for display randomize 1,7,10
+
+module test;
+  integer a;
+  initial begin
+    repeat(20) begin
+      if(randomize(a)with{a inside{1,7,10};})
+        $display("num1=%0d",a);
+        
+      #2; end
+  end
+endmodule
+
+
+//rand function
+
+// Code your testbench here
+// or browse Examples
+class sample;
+  rand int num1;
+  int num2;
+endclass
+module test;
+  sample sm;
+  initial begin
+    sm=new();
+    repeat(20)
+      assert(sm.randomize())
+        $display("num1=%0d and num2=%0d",sm.num1,sm.num2);
+  end
+endmodule
+
+//randomize between 0 to 100 uisng rand
+
+// Code your testbench here
+// or browse Examples
+class sample;
+  rand int num1;
+  int num2;
+endclass
+module test;
+  sample sm;
+  initial begin
+    sm=new();
+    repeat(20)
+      assert(sm.randomize(num1)with{num1>0;num1<100;})
+        $display("num1=%0d and num2=%0d",sm.num1,sm.num2);
+  end
+endmodule
+
+
+// Code your testbench here
+// or browse Examples
+class sample;
+  int num1;
+  rand int num2;
+endclass
+module test;
+  sample sm;
+  initial begin
+    sm=new();
+    repeat(20)
+      assert(sm.randomize(num1,num2)with{num1>0;num1<100;})
+        $display("num1=%0d and num2=%0d",sm.num1,sm.num2);
+  end
+endmodule
+
+
+//randomize single variable
+
+// Code your testbench here
+// or browse Examples
+class sample;
+  rand int num1;
+  rand int num2;
+  rand int num3;
+endclass
+module test;
+  sample sm;
+  initial begin
+    sm=new();
+    repeat(20)
+      assert(sm.randomize(num1)with{num1>0;num1<100;})
+        $display("num1=%0d and num2=%0d and num3=%0d",sm.num1,sm.num2,sm.num3);
+  end
+endmodule
+
+//randomize value of class a with obj creation in class b
+class a;
+  rand int num;
+endclass
+class b;
+  rand a a1;
+  function new;
+    a1=new();
+  endfunction
+endclass 
+module tb;
+  b b1;
+  initial begin
+    b1=new();
+    repeat(20)
+      begin
+        assert(b1.randomize())
+          $display("value=%0d",b1.a1.num);
+      end
+  end
+    endmodule
+
+
+//randomize with struct
+
+class sample;
+  typedef struct{randc int a;
+                 bit[3:0]b;
+                }st_t;
+  rand st_t st;
+endclass
+module test;
+  sample sm;
+  initial begin
+    sm=new();
+    repeat(20)
+      assert(sm.randomize())
+        $display("value of a=%0d and vlue of b=%0d",sm.st.a,sm.st.b);
+        end
+        endmodule

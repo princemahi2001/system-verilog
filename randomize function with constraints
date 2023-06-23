@@ -251,3 +251,33 @@ module test;
         $display("value of a=%0d and value of b=%0d",x1.a,x1.b);
   end
 endmodule
+
+
+//create a class transaction -->a,b[2bit] and create class generation -->handle of transaction -->randomize a and b.
+//print before excution and print values after randomization
+
+
+class transaction;
+  rand bit[1:0] a;
+  rand bit[1:0] b;
+endclass
+class generation;
+  rand transaction t1;
+  function new;
+    t1=new;
+  endfunction
+  //rand t1.a;
+  //rand t1.b;
+endclass
+module tb;
+  generation g1;
+  initial begin
+    g1=new;
+    $display("randomization starts");
+    repeat(10) begin
+      assert(g1.randomize());
+      $display(g1.t1.a);
+      $display(g1.t1.b);
+    end
+  end
+endmodule

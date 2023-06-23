@@ -1,0 +1,9 @@
+module test;
+  integer num1,num2,seed=5;
+  initial repeat(20) begin
+    #2 num1=$urandom(seed);
+    $display("num1=%0d",num1);
+    num2=$urandom;
+    $display("num2=%0d",num2);
+  end
+endmodule

@@ -1,0 +1,10 @@
+module test;
+  integer num1,num2;
+  initial begin
+    repeat(20) begin
+      if(randomize(num1,num2)) begin
+        $display("num1=%0d",num1);
+        $display("num2=%0d",num2); end
+      #2; end
+  end
+endmodule

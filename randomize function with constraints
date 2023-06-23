@@ -166,3 +166,64 @@ module test;
         $display("value of a=%0d and vlue of b=%0d",sm.st.a,sm.st.b);
         end
         endmodule
+
+
+//create a randomized constraint for class a with a range 30-70
+
+// Code your testbench here
+// or browse Examples
+class abc;
+  rand int a;
+  randc bit[7:0]b;
+  constraint c{a>30;a<70;}
+  constraint c1{b inside{[1:7],15,[17:20],30};}
+  
+endclass
+module test;
+  abc x1;
+  initial begin
+    x1=new;
+    repeat(10)
+      assert(x1.randomize())
+        $display("value of a=%0d and value of b=%b",x1.a,x1.b);
+  end
+endmodule
+
+//
+
+// Code your testbench here
+// or browse Examples
+class abc;
+  rand int a;
+  randc bit[7:0]b;
+  constraint c{a>0;a%2==0;}
+  constraint c1{b%2!=0;}
+  
+endclass
+module test;
+  abc x1;
+  initial begin
+    x1=new;
+    repeat(10)
+      assert(x1.randomize())
+        $display("value of a=%0d and value of b=%0d",x1.a,x1.b);
+  end
+endmodule
+// Code your testbench here
+// or browse Examples
+class abc;
+  rand int a;
+  randc bit[7:0]b;
+  constraint c{a>0;a<100;a%6==0;}
+  constraint c1{b<100;b%7==0;}
+  
+endclass
+module test;
+  abc x1;
+  initial begin
+    x1=new;
+    repeat(10)
+      assert(x1.randomize())
+        $display("value of a=%0d and value of b=%0d",x1.a,x1.b);
+  end
+endmodule

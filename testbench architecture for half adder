@@ -1,0 +1,119 @@
+// Code your design here
+//1.HA.sv
+
+module HA(input logic a,b,c, output logic sum,carry);
+assign sum=a^b^c;
+assign carry=a&b&c;
+endmodule
+
+//2.Interface
+
+interface intf;
+logic a;
+logic b; 
+logic c;
+logic sum;
+logic carry;
+endinterface
+
+//3.Transaction
+
+class transaction;
+rand bit a,b,c; 
+bit sum,carry;
+endclass
+
+//4.Generator
+
+class generator;
+mailbox gen2driv;
+rand transaction trans;
+function new(mailbox gen2driv);
+this.gen2driv=gen2driv;
+endfunction
+task run;
+repeat(5)
+begin
+trans=new;
+void'(trans.randomize());
+gen2driv.put(trans);
+$display("-----------------");
+$display("   In generator class   ");
+  $display("a=%b , b=%b , c=%b",trans.a,trans.b,trans.c); 
+$display("------------------------------");
+end
+endtask 
+endclass
+
+//5.Driver
+
+class driver;
+transaction trans;
+mailbox gen2driv;
+virtual intf vif;
+function new(virtual intf vif,mailbox gen2driv);
+this.vif=vif;
+this.gen2driv=gen2driv;
+endfunction
+task run;
+repeat(5)
+begin
+trans=new();
+gen2driv.get(trans);
+vif.a=trans.a; 
+vif.b=trans.b; 
+vif.c=trans.c; 
+#2;
+trans.sum=vif.sum;
+trans.carry=vif.carry;
+$display("-----------------------");
+$display("in driver class  ");
+$display("the received packets");
+  $display("a=%b, b=%b , c=%b , sum=%b ,carry=%b",trans.a,trans.b,trans.c,trans.sum,trans.carry);
+end 
+endtask
+endclass
+
+//6.Environment
+
+class environment;
+virtual intf vif;
+mailbox gen2driv;
+generator gen;
+driver driv;
+function new(virtual intf vif);
+this.vif=vif;
+gen2driv=new();
+gen=new(gen2driv);
+driv=new(vif,gen2driv);
+endfunction
+task run;
+repeat(5)
+fork 
+gen.run;
+driv.run;
+join
+endtask
+endclass
+
+//7.Test Program
+
+program test(intf i_intf);
+//virtual intf vif;
+environment env;
+initial begin
+env= new(i_intf);
+env.run();
+end
+endprogram
+
+//8.Top test
+
+module top_test_module();
+intf i_intf();
+test t1(i_intf);
+  HA DUT(.a(i_intf.a),.b(i_intf.b),.c(i_intf.c),.sum(i_intf.sum),.carry(i_intf.carry));
+initial begin
+$display("completed");
+end
+endmodule

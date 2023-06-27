@@ -117,3 +117,192 @@ initial begin
 $display("completed");
 end
 endmodule
+
+
+
+
+
+
+
+
+
+/////////////////////////////////////////////////////////////for decoder2x4
+
+// Code your design here
+module decoder2x4(input logic a,b, 
+                  output logic d0,d1,d2,d3);
+  assign d0=((~a)&(~b));
+  assign d1=((~a)&(b));
+  assign d2=((a)&(~b));
+  assign d3=((a)&(b));
+endmodule
+
+// Code your testbench here
+// or browse Examples
+//interface
+interface intf;
+  logic a,b,d0,d1,d2,d3;
+endinterface
+
+//transaction
+
+class transaction;
+  rand logic a,b;
+  logic d0,d1,d2,d3;
+endclass
+
+//generator
+class generator;
+rand transaction trans;
+mailbox gen2driv;
+  function new(mailbox gen2driv);
+  this.gen2driv=gen2driv;
+endfunction
+task run;
+  repeat(2)
+    begin
+      trans=new();
+      void'(trans.randomize());
+      gen2driv.put(trans);
+    end
+endtask
+endclass
+
+//driver
+
+class driver;
+  virtual intf vif;
+  transaction trans;
+  mailbox gen2drive;
+  function new(virtual intf vif,mailbox gen2drive);
+    this.vif=vif;
+    this.gen2drive=gen2drive;
+  endfunction
+  task run;
+    repeat(5)
+      begin
+        trans=new();
+        gen2drive.get(trans);
+        vif.a=trans.a;
+        vif.b=trans.b;
+      end
+  endtask
+endclass
+
+
+//monitor
+class monitor;
+  transaction trans;
+  virtual intf vif;
+  mailbox mon2scb;
+  function new(virtual intf vif,mailbox mon2scb);
+    this.vif=vif;
+    this.mon2scb=mon2scb;
+  endfunction 
+  task run;
+    repeat(5)
+      begin
+      trans=new();
+        #1;
+        trans.a= vif.a;
+        trans.b= vif.b;
+    trans.d0=vif.d0;
+    trans.d1=vif.d1;
+    trans.d2=vif.d2;
+    trans.d3=vif.d3;
+        mon2scb.put(trans);
+      end
+  endtask
+endclass
+
+//scoreboard
+
+class scoreboard;
+  transaction trans;
+  mailbox mon2scb;
+  function new(mailbox mon2scb);
+    this.mon2scb=mon2scb;
+  endfunction
+  task run;
+    repeat(5)
+      begin
+        trans= new;
+        #1;
+        mon2scb.get(trans);
+        if((trans.a==0) & (trans.b==0))
+          begin
+            if(trans.d0==1) $display("Expected output");
+            else $display("wrong output");
+          end
+        else if(trans.a==0 & trans.b==1) 
+          begin
+            if(trans.d1==1) $display("Expected output");
+            else $display("wrong output");
+          end
+        else if(trans.a==1 & trans.b==0) 
+          begin
+            if(trans.d2==1) $display("Expected output");
+            else $display("wrong output");
+          end
+        else
+          begin
+            if(trans.d3==1) $display("Expected output");
+            else $display("wrong output");
+          end
+      end
+  endtask
+endclass
+
+//encironment
+
+class environment;
+   generator gen;
+   driver driv;
+   monitor moni;
+   scoreboard scb;
+   mailbox gen2driv;
+   mailbox mon2scb;
+   virtual intf vif;
+   function new(virtual intf vif);
+      this.vif=vif;
+      gen2driv=new();
+     mon2scb= new();
+      gen=new(gen2driv);
+      driv=new(vif,gen2driv);
+     moni=new(vif,mon2scb);
+     scb=new(mon2scb);
+   endfunction
+  task run;
+    repeat(5)
+    fork 
+      gen.run;
+      driv.run;
+      moni.run;
+      scb.run;
+    join
+  endtask
+endclass
+
+
+//test
+
+program test(intf i_intf);
+environment env;
+initial begin
+env= new(i_intf);
+env.run();
+end
+endprogram
+
+
+//top_test
+
+module top_test_module();
+intf i_intf();
+test t1(i_intf);
+  decoder2x4 DUT(.a(i_intf.a),.b(i_intf.b),.d0(i_intf.d0),.d1(i_intf.d1),.d2(i_intf.d2),.d3(i_intf.d3));
+initial begin
+$display("completed");
+end
+endmodule
+

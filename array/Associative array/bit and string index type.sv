@@ -1,6 +1,7 @@
 // Code your testbench here
 // or browse Examples
 module tb;
+  int a_array1[*] ;     // associative array of integer (unspecified index)
   int a2[bit [7:0]];   //index type is bit [7:0] and entry type is int
   int a[string];  //index type is string and entry type is bit
   initial 
